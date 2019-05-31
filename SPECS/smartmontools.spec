@@ -1,7 +1,7 @@
 Summary:	Tools for monitoring SMART capable hard disks
 Name:		smartmontools
 Version:	6.5
-Release:	1%{?dist}
+Release:	1.1%{?dist}
 Epoch:		1
 Group:		System Environment/Base
 License:	GPLv2+
@@ -68,6 +68,10 @@ install -D -p -m 755 %{SOURCE4} $RPM_BUILD_ROOT/%{_libexecdir}/%{name}/smartdnot
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/%{name}/smartd_warning.d
 rm -rf $RPM_BUILD_ROOT/etc/{rc.d,init.d}
 rm -rf $RPM_BUILD_ROOT/%{_docdir}/%{name}
+# symlink to /var/log/smartd so that data is stored in the logs partition
+mkdir -p %{buildroot}%{_sharedstatedir}
+mkdir -p %{buildroot}/var/log/smartd
+ln -s /var/log/smartd %{buildroot}%{_sharedstatedir}/smartmontools
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -109,8 +113,14 @@ fi
 %{_mandir}/man8/update-smart-drivedb.8*
 %{_libexecdir}/%{name}
 %{_datadir}/%{name}
+%dir /var/log/smartd
+%{_sharedstatedir}/%{name}
 
 %changelog
+* Fri May 31 2019 Samuel Verschelde <stormi-xcp@ylix.fr> - 1:6.5-1.1
+- Add a /var/log/smartd directory and symlink /var/lib/smartmontools to it
+- This allows smartd to write an attribute log
+
 * Wed Oct 11 2017 Michal Hlavinka <mhlavink@redhat.com> - 1:6.5-1
 - smartmontools updated to 6.5
 - adds support for NVMe devices (#1369731)
