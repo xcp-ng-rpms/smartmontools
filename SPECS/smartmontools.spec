@@ -24,6 +24,7 @@ Requires(postun):	systemd-units
 BuildRequires:	readline-devel ncurses-devel automake util-linux groff gettext
 BuildRequires:	libselinux-devel libcap-ng-devel
 BuildRequires:	systemd-units
+BuildRequires:  gcc-c++
 
 %description
 The smartmontools package contains two utility programs (smartctl
