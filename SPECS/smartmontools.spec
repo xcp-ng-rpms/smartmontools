@@ -1,6 +1,6 @@
-%global package_speccommit edaa4d38205d4ad8fa3e6e74090f109e185b437c
-%global usver 7.4
-%global xsver 2
+%global package_speccommit 83567626d2437b1e17d4e57ed69f71b3a81f7023
+%global usver 7.5
+%global xsver 1
 %global xsrel %{xsver}%{?xscount}%{?xshash}
 # xsrel setup is automatic, see the Packaging Guidelines for details:
 # https://info.citrite.net/display/xenserver/RPM+Packaging+Guidelines
@@ -8,20 +8,19 @@
 # defining macros needed by SELinux
 %global with_selinux 0
 %global selinuxtype targeted
-%global moduletype contrib
 %global modulename smartmon
 
 Summary:	Tools for monitoring SMART capable hard disks
 Name:		smartmontools
-Version:	7.4
-Release:        %{?xsrel}%{?dist}
+Version:	7.5
+Release: %{?xsrel}%{?dist}
 # RHEL7/XS8 smartmontools use epoch 1. Epoch 1 is required to update it.
 %if 0%{?xenserver} < 9
 Epoch: 1
 %endif
 License:	GPL-2.0-or-later
 URL:		http://smartmontools.sourceforge.net/
-Source0: smartmontools-7.4.tar.gz
+Source0: smartmontools-7.5.tar.gz
 Source2: smartmontools.sysconf
 Source4: smartdnotify
 Patch0: smartmontools-5.38-defaultconf.patch
@@ -37,11 +36,12 @@ BuildRequires:	gcc-c++ readline-devel ncurses-devel automake util-linux groff ge
 %if 0%{?xsrel:1} && 0%{?xenserver} < 9
 BuildRequires:  devtoolset-11-gcc-c++
 %endif
-BuildRequires:	libselinux-devel libcap-ng-devel
+BuildRequires:	libcap-ng-devel
 BuildRequires:	systemd systemd-devel
 %if 0%{?with_selinux}
 # This ensures that the *-selinux package and all it’s dependencies are not pulled
 # into containers and other systems that do not use SELinux
+BuildRequires:	libselinux-devel
 Requires:	(%{name}-selinux if selinux-policy-%{selinuxtype})
 %endif
 
@@ -192,7 +192,7 @@ fi
 %license COPYING
 %dir %{_sysconfdir}/%name
 %dir %{_sysconfdir}/%name/smartd_warning.d
-%config(noreplace) %{_sysconfdir}/%{name}/smartd.conf
+%{_sysconfdir}/%{name}/smartd.conf
 %config(noreplace) %{_sysconfdir}/%{name}/smartd_warning.sh
 %config(noreplace) %{_sysconfdir}/sysconfig/smartmontools
 %{_unitdir}/smartd.service
@@ -214,6 +214,18 @@ fi
 %endif
 
 %changelog
+* Thu Nov 06 2025 Ross Lagerwall <ross.lagerwall@citrix.com> - 7.5-1
+- CP-310539: Update to 7.5
+
+* Mon Feb 24 2025 Ross Lagerwall <ross.lagerwall@citrix.com> - 7.4-5
+- CA-406306: Fix a buffer overrun in scsi_decode_lu_dev_id
+
+* Mon Jan 20 2025 Stephen Cheng <stephen.cheng@cloud.com> - 7.4-4
+- CP-53270: Move selinux dependencies to with_selinux conditional
+
+* Fri Nov 01 2024 Alex Brett <alex.brett@cloud.com> - 7.4-3
+- CP-52060: Avoid having to patch smartd.conf in xenserver-release
+
 * Wed Jul 31 2024 Bernhard Kaindl <bernhard.kaindl@citrix.com> - 7.4-2
 - CP-50530: Update smartmontools to support exporting S.M.A.R.T. metrics as JSON
 * Mon Sep 04 2023 Lin Liu <lin.liu@citrix.com> - 7.4-1
