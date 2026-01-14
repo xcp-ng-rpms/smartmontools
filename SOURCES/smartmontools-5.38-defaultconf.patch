@@ -6,7 +6,7 @@ diff -up smartmontools-5.38/smartd.conf.defaultconf smartmontools-5.38/smartd.co
  # are found.  Most users should comment out DEVICESCAN and explicitly
  # list the devices that they wish to monitor.
 -DEVICESCAN
-+DEVICESCAN -H -m root -M exec /usr/libexec/smartmontools/smartdnotify -n standby,10,q
++DEVICESCAN -H -n standby,10,q
  
  # Alternative setting to ignore temperature and power-on hours reports
  # in syslog.
